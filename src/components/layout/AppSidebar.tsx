@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
-  ClipboardList, LogOut, Shield, User as UserIcon
+  ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
