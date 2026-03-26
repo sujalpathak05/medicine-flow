@@ -129,8 +129,6 @@ export default function SellMedicinePage() {
 
     setSubmitting(true);
     try {
-      // Get next invoice number
-      const { data: seqData } = await supabase.rpc("has_role" as any, { _user_id: user.id, _role: "user" });
       const invoiceNumber = `INV-${Date.now()}`;
 
       // Insert sale
