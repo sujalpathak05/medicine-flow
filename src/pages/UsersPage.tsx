@@ -5,9 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Shield, User, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Shield, User, Loader2, Plus, Copy, Check, Trash2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -23,6 +26,26 @@ export default function UsersPage() {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [branchUsers, setBranchUsers] = useState<BranchUser[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Create user state
+  const [createOpen, setCreateOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newFullName, setNewFullName] = useState("");
+  const [newRole, setNewRole] = useState<"user" | "admin">("user");
+  const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string; loginUrl: string } | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Reset password state
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetUserId, setResetUserId] = useState("");
+  const [resetUserEmail, setResetUserEmail] = useState("");
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetting, setResetting] = useState(false);
+
+  // Delete user state
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const fetchData = async () => {
     const [{ data: p }, { data: r }, { data: b }, { data: bu }] = await Promise.all([
@@ -74,13 +97,173 @@ export default function UsersPage() {
     }
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "create_user", email: newEmail, password: newPassword, full_name: newFullName, role: newRole },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const loginUrl = `${window.location.origin}/auth`;
+      setCreatedCredentials({ email: newEmail, password: newPassword, loginUrl });
+      toast.success("User created successfully!");
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create user");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCopyCredentials = async () => {
+    if (!createdCredentials) return;
+    const text = `🏥 MedInventory Login Details\n\n📧 Email: ${createdCredentials.email}\n🔑 Password: ${createdCredentials.password}\n🔗 Login URL: ${createdCredentials.loginUrl}\n\nPlease login and change your password.`;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast.success("Credentials copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "reset_password", user_id: resetUserId, new_password: resetPassword },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Password reset successfully!");
+      setResetOpen(false);
+      setResetPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reset password");
+    } finally {
+      setResetting(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    setDeleting(userId);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "delete_user", user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("User deleted");
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete user");
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const resetCreateForm = () => {
+    setNewEmail("");
+    setNewPassword("");
+    setNewFullName("");
+    setNewRole("user");
+    setCreatedCredentials(null);
+    setCopied(false);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-display font-bold">Users</h1>
-          <p className="text-sm text-muted-foreground">Manage users and their roles</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-display font-bold">Users</h1>
+            <p className="text-sm text-muted-foreground">Manage users, roles, and credentials</p>
+          </div>
+
+          <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) resetCreateForm(); }}>
+            <DialogTrigger asChild>
+              <Button><Plus className="h-4 w-4 mr-2" />Create User</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-display">
+                  {createdCredentials ? "User Created!" : "Create New User"}
+                </DialogTitle>
+              </DialogHeader>
+
+              {createdCredentials ? (
+                <div className="space-y-4">
+                  <div className="rounded-lg border bg-muted/50 p-4 space-y-2">
+                    <p className="text-sm font-medium">Login Credentials:</p>
+                    <div className="text-sm space-y-1">
+                      <p><span className="text-muted-foreground">Email:</span> {createdCredentials.email}</p>
+                      <p><span className="text-muted-foreground">Password:</span> {createdCredentials.password}</p>
+                      <p><span className="text-muted-foreground">Login URL:</span> {createdCredentials.loginUrl}</p>
+                    </div>
+                  </div>
+                  <Button onClick={handleCopyCredentials} className="w-full" variant="outline">
+                    {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
+                    {copied ? "Copied!" : "Copy Credentials"}
+                  </Button>
+                  <Button onClick={() => { resetCreateForm(); }} className="w-full">
+                    Create Another User
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleCreateUser} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Full Name</Label>
+                    <Input value={newFullName} onChange={(e) => setNewFullName(e.target.value)} placeholder="User name" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="user@example.com" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Password</Label>
+                    <Input type="text" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Set a password" required minLength={6} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role</Label>
+                    <Select value={newRole} onValueChange={(v) => setNewRole(v as "user" | "admin")}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={creating}>
+                    {creating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    Create User
+                  </Button>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
+
+        {/* Reset Password Dialog */}
+        <Dialog open={resetOpen} onOpenChange={(o) => { setResetOpen(o); if (!o) setResetPassword(""); }}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="font-display">Reset Password</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">Set new password for {resetUserEmail}</p>
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label>New Password</Label>
+                <Input type="text" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} placeholder="New password" required minLength={6} />
+              </div>
+              <Button type="submit" className="w-full" disabled={resetting}>
+                {resetting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                Reset Password
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         <Card className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
@@ -92,13 +275,14 @@ export default function UsersPage() {
                   <TableHead>Role</TableHead>
                   <TableHead>Branch</TableHead>
                   <TableHead>Joined</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8"><Loader2 className="h-5 w-5 animate-spin mx-auto" /></TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8"><Loader2 className="h-5 w-5 animate-spin mx-auto" /></TableCell></TableRow>
                 ) : profiles.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No users yet</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No users yet</TableCell></TableRow>
                 ) : (
                   profiles.map((p) => {
                     const isCurrentUser = p.user_id === currentUser?.id;
@@ -134,6 +318,35 @@ export default function UsersPage() {
                           </Select>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              title="Reset Password"
+                              onClick={() => {
+                                setResetUserId(p.user_id);
+                                setResetUserEmail(p.email || "");
+                                setResetOpen(true);
+                              }}
+                            >
+                              <KeyRound className="h-4 w-4" />
+                            </Button>
+                            {!isCurrentUser && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                title="Delete User"
+                                disabled={deleting === p.user_id}
+                                onClick={() => handleDeleteUser(p.user_id)}
+                              >
+                                {deleting === p.user_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
                       </TableRow>
                     );
                   })
