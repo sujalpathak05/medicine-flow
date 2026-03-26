@@ -11,6 +11,7 @@ import BranchesPage from "./pages/BranchesPage";
 import UsersPage from "./pages/UsersPage";
 import TransfersPage from "./pages/TransfersPage";
 import ActivityPage from "./pages/ActivityPage";
+import SellMedicinePage from "./pages/SellMedicinePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
