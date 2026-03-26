@@ -25,6 +25,7 @@ const adminItems = [
 const userItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
+  { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
 ];
 
