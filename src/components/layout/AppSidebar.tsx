@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
-  ClipboardList, LogOut, Shield, User as UserIcon
+  ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 const adminItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
+  { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
   { title: "Branches", url: "/branches", icon: Building2 },
   { title: "Users", url: "/users", icon: Users },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
@@ -24,6 +25,7 @@ const adminItems = [
 const userItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
+  { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
 ];
 

@@ -189,6 +189,104 @@ export type Database = {
         }
         Relationships: []
       }
+      sale_items: {
+        Row: {
+          created_at: string
+          id: string
+          medicine_id: string
+          medicine_name: string
+          quantity: number
+          sale_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          medicine_id: string
+          medicine_name: string
+          quantity: number
+          sale_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          medicine_id?: string
+          medicine_name?: string
+          quantity?: number
+          sale_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          branch_id: string
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          discount: number
+          id: string
+          invoice_number: string
+          net_amount: number
+          payment_method: string
+          sold_by: string
+          total_amount: number
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount?: number
+          id?: string
+          invoice_number: string
+          net_amount?: number
+          payment_method?: string
+          sold_by: string
+          total_amount?: number
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount?: number
+          id?: string
+          invoice_number?: string
+          net_amount?: number
+          payment_method?: string
+          sold_by?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_transfers: {
         Row: {
           approved_by: string | null
