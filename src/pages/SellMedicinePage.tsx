@@ -198,7 +198,7 @@ export default function SellMedicinePage() {
       fetchData();
       toast.success("Sale completed! Bill generated.");
 
-      // Auto-send WhatsApp bill
+      // Auto-send WhatsApp bill to customer phone
       if (customerPhone) {
         const phone = customerPhone.replace(/\D/g, "");
         const phoneNum = phone.startsWith("91") ? phone : `91${phone}`;
