@@ -35,7 +35,7 @@ export default function MedicinesPage() {
 
   const [form, setForm] = useState({
     name: "", category: "tablet" as any, batch_number: "", expiry_date: "",
-    price: "0", quantity: "0", min_quantity: "10", branch_id: "", description: "", manufacturer: "",
+    price: "0", quantity: "0", min_quantity: "10", branch_ids: [] as string[], branch_id: "", description: "", manufacturer: "",
   });
 
   const fetchData = async () => {
