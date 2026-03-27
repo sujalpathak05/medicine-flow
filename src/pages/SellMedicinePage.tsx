@@ -197,6 +197,15 @@ export default function SellMedicinePage() {
       setDiscount("0");
       fetchData();
       toast.success("Sale completed! Bill generated.");
+
+      // Auto-send WhatsApp bill
+      if (customerPhone) {
+        const phone = customerPhone.replace(/\D/g, "");
+        const phoneNum = phone.startsWith("91") ? phone : `91${phone}`;
+        const items = [...cart].map(i => `${i.medicine.name} x${i.quantity} = ₹${i.totalPrice.toFixed(2)}`).join("\n");
+        const msg = `🧾 *MedInventory Invoice*\n📄 ${invoiceNumber}\n📅 ${new Date().toLocaleString("en-IN")}\n🏪 ${branchName}\n\n*Items:*\n${items}\n\n💰 Subtotal: ₹${totalAmount.toFixed(2)}${discountAmount > 0 ? `\n🎁 Discount: -₹${discountAmount.toFixed(2)}` : ""}\n✅ *Total: ₹${netAmount.toFixed(2)}*\n💳 Payment: ${paymentMethod.toUpperCase()}\n\nThank you! 🙏`;
+        window.open(`https://wa.me/${phoneNum}?text=${encodeURIComponent(msg)}`, "_blank");
+      }
     } catch (err: any) {
       toast.error(err.message || "Sale failed!");
     } finally {
