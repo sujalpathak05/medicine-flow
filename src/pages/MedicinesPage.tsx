@@ -35,7 +35,7 @@ export default function MedicinesPage() {
 
   const [form, setForm] = useState({
     name: "", category: "tablet" as any, batch_number: "", expiry_date: "",
-    price: "0", quantity: "0", min_quantity: "10", branch_id: "", description: "", manufacturer: "",
+    price: "0", quantity: "0", min_quantity: "10", branch_ids: [] as string[], branch_id: "", description: "", manufacturer: "",
   });
 
   const fetchData = async () => {
@@ -58,7 +58,7 @@ export default function MedicinesPage() {
   }, []);
 
   const resetForm = () => {
-    setForm({ name: "", category: "tablet", batch_number: "", expiry_date: "", price: "0", quantity: "0", min_quantity: "10", branch_id: branches[0]?.id ?? "", description: "", manufacturer: "" });
+    setForm({ name: "", category: "tablet", batch_number: "", expiry_date: "", price: "0", quantity: "0", min_quantity: "10", branch_ids: [], branch_id: "", description: "", manufacturer: "" });
     setEditingMed(null);
   };
 
@@ -67,26 +67,27 @@ export default function MedicinesPage() {
     setForm({
       name: m.name, category: m.category, batch_number: m.batch_number,
       expiry_date: m.expiry_date, price: String(m.price), quantity: String(m.quantity),
-      min_quantity: String(m.min_quantity), branch_id: m.branch_id,
+      min_quantity: String(m.min_quantity), branch_id: m.branch_id, branch_ids: [m.branch_id],
       description: m.description ?? "", manufacturer: m.manufacturer ?? "",
     });
     setDialogOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.name || !form.batch_number || !form.expiry_date || !form.branch_id) {
-      toast.error("Please fill required fields");
+    const branchIds = editingMed ? [form.branch_id] : form.branch_ids;
+    if (!form.name || !form.batch_number || !form.expiry_date || branchIds.length === 0) {
+      toast.error("Please fill required fields (including at least one branch)");
       return;
     }
     setSaving(true);
-    const payload: TablesInsert<"medicines"> = {
-      name: form.name, category: form.category, batch_number: form.batch_number,
-      expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
-      min_quantity: parseInt(form.min_quantity), branch_id: form.branch_id,
-      description: form.description || null, manufacturer: form.manufacturer || null,
-    };
 
     if (editingMed) {
+      const payload: TablesInsert<"medicines"> = {
+        name: form.name, category: form.category, batch_number: form.batch_number,
+        expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
+        min_quantity: parseInt(form.min_quantity), branch_id: form.branch_id,
+        description: form.description || null, manufacturer: form.manufacturer || null,
+      };
       const { error } = await supabase.from("medicines").update(payload).eq("id", editingMed.id);
       if (error) toast.error(error.message);
       else {
@@ -94,11 +95,17 @@ export default function MedicinesPage() {
         await logActivity("Updated medicine: " + form.name, "medicine", editingMed.id);
       }
     } else {
-      const { error } = await supabase.from("medicines").insert(payload);
+      const payloads = branchIds.map((bid) => ({
+        name: form.name, category: form.category, batch_number: form.batch_number,
+        expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
+        min_quantity: parseInt(form.min_quantity), branch_id: bid,
+        description: form.description || null, manufacturer: form.manufacturer || null,
+      }));
+      const { error } = await supabase.from("medicines").insert(payloads);
       if (error) toast.error(error.message);
       else {
-        toast.success("Medicine added");
-        await logActivity("Added medicine: " + form.name, "medicine");
+        toast.success(`Medicine added to ${branchIds.length} branch(es)`);
+        await logActivity("Added medicine: " + form.name + ` to ${branchIds.length} branches`, "medicine");
       }
     }
     setSaving(false);
@@ -189,15 +196,39 @@ export default function MedicinesPage() {
                       <Input type="number" value={form.min_quantity} onChange={(e) => setForm({ ...form, min_quantity: e.target.value })} />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Branch *</Label>
-                    <Select value={form.branch_id} onValueChange={(v) => setForm({ ...form, branch_id: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger>
-                      <SelectContent>
-                        {branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {editingMed ? (
+                    <div className="space-y-2">
+                      <Label>Branch *</Label>
+                      <Select value={form.branch_id} onValueChange={(v) => setForm({ ...form, branch_id: v })}>
+                        <SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger>
+                        <SelectContent>
+                          {branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label>Branches * (multiple select)</Label>
+                      <div className="grid grid-cols-2 gap-2 p-3 border rounded-md max-h-32 overflow-auto">
+                        {branches.map((b) => (
+                          <label key={b.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={form.branch_ids.includes(b.id)}
+                              onChange={(e) => {
+                                const ids = e.target.checked
+                                  ? [...form.branch_ids, b.id]
+                                  : form.branch_ids.filter((id) => id !== b.id);
+                                setForm({ ...form, branch_ids: ids });
+                              }}
+                              className="rounded border-input"
+                            />
+                            {b.name}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Manufacturer</Label>
