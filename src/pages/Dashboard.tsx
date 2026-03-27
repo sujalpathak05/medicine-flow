@@ -191,7 +191,7 @@ export default function Dashboard() {
           <Card className="glass-card">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">
-                Total Inventory Value: <span className="text-foreground font-display font-bold text-lg">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                Total Inventory Value: <span className="text-foreground font-display font-bold text-lg">₹{totalValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
               </p>
             </CardContent>
           </Card>
