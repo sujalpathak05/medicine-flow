@@ -196,15 +196,39 @@ export default function MedicinesPage() {
                       <Input type="number" value={form.min_quantity} onChange={(e) => setForm({ ...form, min_quantity: e.target.value })} />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Branch *</Label>
-                    <Select value={form.branch_id} onValueChange={(v) => setForm({ ...form, branch_id: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger>
-                      <SelectContent>
-                        {branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {editingMed ? (
+                    <div className="space-y-2">
+                      <Label>Branch *</Label>
+                      <Select value={form.branch_id} onValueChange={(v) => setForm({ ...form, branch_id: v })}>
+                        <SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger>
+                        <SelectContent>
+                          {branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label>Branches * (multiple select)</Label>
+                      <div className="grid grid-cols-2 gap-2 p-3 border rounded-md max-h-32 overflow-auto">
+                        {branches.map((b) => (
+                          <label key={b.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={form.branch_ids.includes(b.id)}
+                              onChange={(e) => {
+                                const ids = e.target.checked
+                                  ? [...form.branch_ids, b.id]
+                                  : form.branch_ids.filter((id) => id !== b.id);
+                                setForm({ ...form, branch_ids: ids });
+                              }}
+                              className="rounded border-input"
+                            />
+                            {b.name}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Manufacturer</Label>
