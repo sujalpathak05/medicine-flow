@@ -67,7 +67,7 @@ export default function MedicinesPage() {
     setForm({
       name: m.name, category: m.category, batch_number: m.batch_number,
       expiry_date: m.expiry_date, price: String(m.price), quantity: String(m.quantity),
-      min_quantity: String(m.min_quantity), branch_id: m.branch_id,
+      min_quantity: String(m.min_quantity), branch_id: m.branch_id, branch_ids: [m.branch_id],
       description: m.description ?? "", manufacturer: m.manufacturer ?? "",
     });
     setDialogOpen(true);
