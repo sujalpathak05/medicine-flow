@@ -74,19 +74,20 @@ export default function MedicinesPage() {
   };
 
   const handleSave = async () => {
-    if (!form.name || !form.batch_number || !form.expiry_date || !form.branch_id) {
-      toast.error("Please fill required fields");
+    const branchIds = editingMed ? [form.branch_id] : form.branch_ids;
+    if (!form.name || !form.batch_number || !form.expiry_date || branchIds.length === 0) {
+      toast.error("Please fill required fields (including at least one branch)");
       return;
     }
     setSaving(true);
-    const payload: TablesInsert<"medicines"> = {
-      name: form.name, category: form.category, batch_number: form.batch_number,
-      expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
-      min_quantity: parseInt(form.min_quantity), branch_id: form.branch_id,
-      description: form.description || null, manufacturer: form.manufacturer || null,
-    };
 
     if (editingMed) {
+      const payload: TablesInsert<"medicines"> = {
+        name: form.name, category: form.category, batch_number: form.batch_number,
+        expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
+        min_quantity: parseInt(form.min_quantity), branch_id: form.branch_id,
+        description: form.description || null, manufacturer: form.manufacturer || null,
+      };
       const { error } = await supabase.from("medicines").update(payload).eq("id", editingMed.id);
       if (error) toast.error(error.message);
       else {
@@ -94,11 +95,17 @@ export default function MedicinesPage() {
         await logActivity("Updated medicine: " + form.name, "medicine", editingMed.id);
       }
     } else {
-      const { error } = await supabase.from("medicines").insert(payload);
+      const payloads = branchIds.map((bid) => ({
+        name: form.name, category: form.category, batch_number: form.batch_number,
+        expiry_date: form.expiry_date, price: parseFloat(form.price), quantity: parseInt(form.quantity),
+        min_quantity: parseInt(form.min_quantity), branch_id: bid,
+        description: form.description || null, manufacturer: form.manufacturer || null,
+      }));
+      const { error } = await supabase.from("medicines").insert(payloads);
       if (error) toast.error(error.message);
       else {
-        toast.success("Medicine added");
-        await logActivity("Added medicine: " + form.name, "medicine");
+        toast.success(`Medicine added to ${branchIds.length} branch(es)`);
+        await logActivity("Added medicine: " + form.name + ` to ${branchIds.length} branches`, "medicine");
       }
     }
     setSaving(false);
