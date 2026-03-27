@@ -58,7 +58,7 @@ export default function MedicinesPage() {
   }, []);
 
   const resetForm = () => {
-    setForm({ name: "", category: "tablet", batch_number: "", expiry_date: "", price: "0", quantity: "0", min_quantity: "10", branch_id: branches[0]?.id ?? "", description: "", manufacturer: "" });
+    setForm({ name: "", category: "tablet", batch_number: "", expiry_date: "", price: "0", quantity: "0", min_quantity: "10", branch_ids: [], branch_id: "", description: "", manufacturer: "" });
     setEditingMed(null);
   };
 
