@@ -103,6 +103,53 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_notes: {
+        Row: {
+          amount: number
+          branch_id: string
+          created_at: string
+          created_by: string
+          id: string
+          note_number: string
+          reason: string | null
+          reference_id: string | null
+          reference_type: string
+          type: string
+        }
+        Insert: {
+          amount?: number
+          branch_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          note_number: string
+          reason?: string | null
+          reference_id?: string | null
+          reference_type?: string
+          type?: string
+        }
+        Update: {
+          amount?: number
+          branch_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          note_number?: string
+          reason?: string | null
+          reference_id?: string | null
+          reference_type?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_notes_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medicines: {
         Row: {
           batch_number: string
@@ -111,9 +158,12 @@ export type Database = {
           created_at: string
           description: string | null
           expiry_date: string
+          gst_rate: number | null
+          hsn_code: string | null
           id: string
           manufacturer: string | null
           min_quantity: number
+          mrp: number | null
           name: string
           price: number
           quantity: number
@@ -126,9 +176,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           expiry_date: string
+          gst_rate?: number | null
+          hsn_code?: string | null
           id?: string
           manufacturer?: string | null
           min_quantity?: number
+          mrp?: number | null
           name: string
           price?: number
           quantity?: number
@@ -141,9 +194,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           expiry_date?: string
+          gst_rate?: number | null
+          hsn_code?: string | null
           id?: string
           manufacturer?: string | null
           min_quantity?: number
+          mrp?: number | null
           name?: string
           price?: number
           quantity?: number
@@ -189,34 +245,166 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_items: {
+        Row: {
+          batch_number: string | null
+          created_at: string
+          expiry_date: string | null
+          gst_rate: number | null
+          id: string
+          medicine_id: string | null
+          medicine_name: string
+          purchase_order_id: string
+          quantity: number
+          total_price: number | null
+          unit_price: number
+        }
+        Insert: {
+          batch_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          gst_rate?: number | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name: string
+          purchase_order_id: string
+          quantity?: number
+          total_price?: number | null
+          unit_price?: number
+        }
+        Update: {
+          batch_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          gst_rate?: number | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name?: string
+          purchase_order_id?: string
+          quantity?: number
+          total_price?: number | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_items_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_orders: {
+        Row: {
+          branch_id: string
+          created_at: string
+          created_by: string
+          gst_amount: number | null
+          id: string
+          net_amount: number | null
+          notes: string | null
+          order_number: string
+          received_at: string | null
+          status: string
+          supplier_id: string
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          created_by: string
+          gst_amount?: number | null
+          id?: string
+          net_amount?: number | null
+          notes?: string | null
+          order_number: string
+          received_at?: string | null
+          status?: string
+          supplier_id: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          created_by?: string
+          gst_amount?: number | null
+          id?: string
+          net_amount?: number | null
+          notes?: string | null
+          order_number?: string
+          received_at?: string | null
+          status?: string
+          supplier_id?: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sale_items: {
         Row: {
+          cgst: number | null
           created_at: string
+          gst_rate: number | null
+          hsn_code: string | null
           id: string
           medicine_id: string
           medicine_name: string
           quantity: number
           sale_id: string
+          sgst: number | null
           total_price: number
           unit_price: number
         }
         Insert: {
+          cgst?: number | null
           created_at?: string
+          gst_rate?: number | null
+          hsn_code?: string | null
           id?: string
           medicine_id: string
           medicine_name: string
           quantity: number
           sale_id: string
+          sgst?: number | null
           total_price: number
           unit_price: number
         }
         Update: {
+          cgst?: number | null
           created_at?: string
+          gst_rate?: number | null
+          hsn_code?: string | null
           id?: string
           medicine_id?: string
           medicine_name?: string
           quantity?: number
           sale_id?: string
+          sgst?: number | null
           total_price?: number
           unit_price?: number
         }
@@ -240,40 +428,52 @@ export type Database = {
       sales: {
         Row: {
           branch_id: string
+          cgst: number | null
           created_at: string
           customer_name: string | null
           customer_phone: string | null
           discount: number
+          gst_amount: number | null
           id: string
+          igst: number | null
           invoice_number: string
           net_amount: number
           payment_method: string
+          sgst: number | null
           sold_by: string
           total_amount: number
         }
         Insert: {
           branch_id: string
+          cgst?: number | null
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
           discount?: number
+          gst_amount?: number | null
           id?: string
+          igst?: number | null
           invoice_number: string
           net_amount?: number
           payment_method?: string
+          sgst?: number | null
           sold_by: string
           total_amount?: number
         }
         Update: {
           branch_id?: string
+          cgst?: number | null
           created_at?: string
           customer_name?: string | null
           customer_phone?: string | null
           discount?: number
+          gst_amount?: number | null
           id?: string
+          igst?: number | null
           invoice_number?: string
           net_amount?: number
           payment_method?: string
+          sgst?: number | null
           sold_by?: string
           total_amount?: number
         }
@@ -283,6 +483,108 @@ export type Database = {
             columns: ["branch_id"]
             isOneToOne: false
             referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_return_items: {
+        Row: {
+          created_at: string
+          id: string
+          medicine_id: string
+          medicine_name: string
+          quantity: number
+          sales_return_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          medicine_id: string
+          medicine_name: string
+          quantity: number
+          sales_return_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          medicine_id?: string
+          medicine_name?: string
+          quantity?: number
+          sales_return_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_return_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_return_items_sales_return_id_fkey"
+            columns: ["sales_return_id"]
+            isOneToOne: false
+            referencedRelation: "sales_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_returns: {
+        Row: {
+          branch_id: string
+          created_at: string
+          created_by: string
+          id: string
+          reason: string | null
+          return_number: string
+          sale_id: string
+          status: string | null
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          reason?: string | null
+          return_number: string
+          sale_id: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string | null
+          return_number?: string
+          sale_id?: string
+          status?: string | null
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_returns_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_returns_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
             referencedColumns: ["id"]
           },
         ]
@@ -350,6 +652,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          gst_number: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          gst_number?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          gst_number?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
