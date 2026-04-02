@@ -12,6 +12,11 @@ import UsersPage from "./pages/UsersPage";
 import TransfersPage from "./pages/TransfersPage";
 import ActivityPage from "./pages/ActivityPage";
 import SellMedicinePage from "./pages/SellMedicinePage";
+import SuppliersPage from "./pages/SuppliersPage";
+import PurchasePage from "./pages/PurchasePage";
+import ReturnsPage from "./pages/ReturnsPage";
+import ReportsPage from "./pages/ReportsPage";
+import AIChatPage from "./pages/AIChatPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +52,11 @@ const App = () => (
             <Route path="/users" element={<ProtectedRoute adminOnly><UsersPage /></ProtectedRoute>} />
             <Route path="/transfers" element={<ProtectedRoute><TransfersPage /></ProtectedRoute>} />
             <Route path="/sell" element={<ProtectedRoute><SellMedicinePage /></ProtectedRoute>} />
+            <Route path="/suppliers" element={<ProtectedRoute adminOnly><SuppliersPage /></ProtectedRoute>} />
+            <Route path="/purchase" element={<ProtectedRoute><PurchasePage /></ProtectedRoute>} />
+            <Route path="/returns" element={<ProtectedRoute><ReturnsPage /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute adminOnly><ReportsPage /></ProtectedRoute>} />
+            <Route path="/ai-assistant" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             <Route path="/activity" element={<ProtectedRoute adminOnly><ActivityPage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

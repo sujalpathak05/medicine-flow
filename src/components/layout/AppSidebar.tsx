@@ -1,6 +1,7 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
-  ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart
+  ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart,
+  Truck, PackagePlus, RotateCcw, FileBarChart, Bot
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -16,9 +17,14 @@ const adminItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
   { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
+  { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
+  { title: "Suppliers", url: "/suppliers", icon: Truck },
+  { title: "Returns", url: "/returns", icon: RotateCcw },
   { title: "Branches", url: "/branches", icon: Building2 },
   { title: "Users", url: "/users", icon: Users },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
+  { title: "Reports", url: "/reports", icon: FileBarChart },
+  { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
   { title: "Activity Log", url: "/activity", icon: ClipboardList },
 ];
 
@@ -26,7 +32,10 @@ const userItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
   { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
+  { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
+  { title: "Returns", url: "/returns", icon: RotateCcw },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
+  { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
 ];
 
 export function AppSidebar() {
