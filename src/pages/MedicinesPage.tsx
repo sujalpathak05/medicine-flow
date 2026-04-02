@@ -304,7 +304,7 @@ export default function MedicinesPage() {
                             {new Date(m.expiry_date).toLocaleDateString()}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right">${m.price}</TableCell>
+                        <TableCell className="text-right">₹{m.price}</TableCell>
                         <TableCell className="text-right">
                           <span className={isLow ? "text-warning font-bold" : ""}>{m.quantity}</span>
                         </TableCell>
