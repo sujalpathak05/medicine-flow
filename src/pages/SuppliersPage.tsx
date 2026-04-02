@@ -25,7 +25,7 @@ interface Supplier {
 }
 
 export default function SuppliersPage() {
-  const { role, user } = useAuth();
+  const { role } = useAuth();
   const isAdmin = role === "admin";
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [search, setSearch] = useState("");

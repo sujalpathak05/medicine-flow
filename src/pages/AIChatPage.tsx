@@ -22,7 +22,7 @@ const SUGGESTIONS = [
 ];
 
 export default function AIChatPage() {
-  const { user } = useAuth();
+  useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
