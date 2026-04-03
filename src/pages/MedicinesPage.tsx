@@ -249,6 +249,7 @@ export default function MedicinesPage() {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           )}
         </div>
 
