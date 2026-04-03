@@ -149,7 +149,9 @@ export default function MedicinesPage() {
             <p className="text-sm text-muted-foreground">{filtered.length} medicines found</p>
           </div>
           {isAdmin && (
-            <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
+            <div className="flex gap-2">
+              <PdfUploadButton branches={branches} onSuccess={fetchData} />
+              <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
               <DialogTrigger asChild>
                 <Button><Plus className="h-4 w-4 mr-2" />Add Medicine</Button>
               </DialogTrigger>
