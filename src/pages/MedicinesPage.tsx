@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Pencil, Trash2, Loader2 } from "lucide-react";
+import { PdfUploadButton } from "@/components/medicines/PdfUploadButton";
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import { Constants } from "@/integrations/supabase/types";
@@ -148,7 +149,9 @@ export default function MedicinesPage() {
             <p className="text-sm text-muted-foreground">{filtered.length} medicines found</p>
           </div>
           {isAdmin && (
-            <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
+            <div className="flex gap-2">
+              <PdfUploadButton branches={branches} onSuccess={fetchData} />
+              <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
               <DialogTrigger asChild>
                 <Button><Plus className="h-4 w-4 mr-2" />Add Medicine</Button>
               </DialogTrigger>
@@ -246,6 +249,7 @@ export default function MedicinesPage() {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           )}
         </div>
 
