@@ -48,7 +48,7 @@ serve(async (req) => {
     console.log("Processing PDF text, length:", pdfText.length, "branchId:", branchId);
 
     // Use AI to parse the PDF text
-    const aiResponse = await fetch("https://api.lovable.dev/v1/chat/completions", {
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
