@@ -1,29 +1,42 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { pdfText, branchId } = await req.json();
+    let body: any;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { pdfText, branchId } = body;
     if (!pdfText || !branchId) {
       return new Response(JSON.stringify({ error: "pdfText and branchId required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Extract token and verify user
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
@@ -32,7 +45,9 @@ serve(async (req) => {
       });
     }
 
-    // Use AI to parse the PDF text into structured medicine data
+    console.log("Processing PDF text, length:", pdfText.length, "branchId:", branchId);
+
+    // Use AI to parse the PDF text
     const aiResponse = await fetch("https://api.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -48,7 +63,7 @@ serve(async (req) => {
 Return a JSON array of objects with these fields:
 - name: medicine name (string, uppercase)
 - category: one of "tablet", "capsule", "syrup", "injection", "ointment", "drops", "inhaler", "other"
-  Determine category from name: TAB/TABLET=tablet, CAP/CAPSULE=capsule, SYRUP=syrup, INJ/INJECTION=injection, CREAM/OINTMENT/GEL=ointment, DROP=drops, INHALER=inhaler, else other (SHAMPOO/LOTION/SERUM/SOAP/FACEWASH/OIL/POWDER=other)
+  Determine category from name: TAB/TABLET=tablet, CAP/CAPSULE=capsule, SYRUP=syrup, INJ/INJECTION=injection, CREAM/OINTMENT/GEL=ointment, DROP=drops, INHALER=inhaler, else other
 - batch_number: generate as "PDF-YYYYNNNN" where YYYY=2026 and NNNN is sequential 4 digit number
 - quantity: extract from stock column if available, default 100. Use positive numbers only.
 - price: default 0
@@ -64,23 +79,46 @@ IMPORTANT: Return ONLY a valid JSON array, no markdown, no explanation.`
       }),
     });
 
-    const aiData = await aiResponse.json();
-    let medicines = [];
-    
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error("AI API error:", aiResponse.status, errText);
+      return new Response(JSON.stringify({ error: "AI processing failed", details: errText }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let aiData: any;
     try {
-      const content = aiData.choices[0].message.content;
-      // Try to parse JSON from the response
+      const rawText = await aiResponse.text();
+      console.log("AI raw response length:", rawText.length);
+      aiData = JSON.parse(rawText);
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", e);
+      return new Response(JSON.stringify({ error: "Failed to parse AI response" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let medicines = [];
+    try {
+      const content = aiData.choices?.[0]?.message?.content;
+      if (!content) {
+        console.error("No content in AI response:", JSON.stringify(aiData).substring(0, 500));
+        return new Response(JSON.stringify({ error: "No content from AI" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         medicines = JSON.parse(jsonMatch[0]);
       }
     } catch (e) {
-      return new Response(JSON.stringify({ error: "Failed to parse AI response", details: String(e) }), {
+      console.error("Failed to parse medicines from AI content:", e);
+      return new Response(JSON.stringify({ error: "Failed to parse AI response content" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Validate categories
     const validCategories = ["tablet", "capsule", "syrup", "injection", "ointment", "drops", "inhaler", "other"];
     
     const dbRecords = medicines.map((m: any, i: number) => ({
@@ -100,7 +138,8 @@ IMPORTANT: Return ONLY a valid JSON array, no markdown, no explanation.`
       });
     }
 
-    // Insert in batches of 50
+    console.log("Inserting", dbRecords.length, "medicines");
+
     let inserted = 0;
     for (let i = 0; i < dbRecords.length; i += 50) {
       const batch = dbRecords.slice(i, i + 50);
@@ -122,6 +161,7 @@ IMPORTANT: Return ONLY a valid JSON array, no markdown, no explanation.`
     });
 
   } catch (error) {
+    console.error("Unhandled error:", error);
     return new Response(JSON.stringify({ error: String(error) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
