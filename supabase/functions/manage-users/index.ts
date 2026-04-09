@@ -22,8 +22,8 @@ Deno.serve(async (req) => {
     if (!authHeader) throw new Error("Not authenticated");
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user: caller } } = await supabaseAdmin.auth.getUser(token);
-    if (!caller) throw new Error("Invalid token");
+    const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !caller) throw new Error(authError?.message || "Invalid token");
 
     const { data: roleCheck } = await supabaseAdmin
       .from("user_roles")
