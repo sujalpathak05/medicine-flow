@@ -12,10 +12,15 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
 
     // Verify caller is admin
     const authHeader = req.headers.get("authorization");
@@ -49,7 +54,6 @@ Deno.serve(async (req) => {
 
       if (createError) throw createError;
 
-      // Set role if admin
       if (role === "admin") {
         await supabaseAdmin
           .from("user_roles")
@@ -69,7 +73,7 @@ Deno.serve(async (req) => {
 
     if (action === "reset_password") {
       const { user_id, new_password } = params;
-      const { error } = await supabaseAdmin.auth.admin.updateUser(user_id, {
+      const { data, error } = await supabaseAdmin.auth.admin.updateUser(user_id, {
         password: new_password,
       });
       if (error) throw error;
