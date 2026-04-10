@@ -124,6 +124,20 @@ export default function MedicinesPage() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (!confirm(`Are you sure you want to delete ALL ${filtered.length} medicines? This cannot be undone!`)) return;
+    if (!confirm("This will permanently delete all displayed medicines. Type OK to confirm.")) return;
+    setSaving(true);
+    const ids = filtered.map((m) => m.id);
+    const { error } = await supabase.from("medicines").delete().in("id", ids);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(`${ids.length} medicines deleted`);
+      await logActivity(`Deleted all medicines (${ids.length} items)`, "medicine");
+    }
+    setSaving(false);
+  };
+
   const logActivity = async (action: string, entityType: string, entityId?: string) => {
     if (!user) return;
     await supabase.from("activity_logs").insert({
@@ -150,6 +164,12 @@ export default function MedicinesPage() {
           </div>
           {isAdmin && (
             <div className="flex gap-2">
+              {filtered.length > 0 && (
+                <Button variant="destructive" onClick={handleDeleteAll} disabled={saving}>
+                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  <Trash2 className="h-4 w-4 mr-2" />Delete All ({filtered.length})
+                </Button>
+              )}
               <PdfUploadButton branches={branches} onSuccess={fetchData} />
               <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
               <DialogTrigger asChild>
