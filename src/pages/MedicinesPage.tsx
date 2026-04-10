@@ -114,8 +114,27 @@ export default function MedicinesPage() {
     resetForm();
   };
 
+  const checkMedicineInUse = async (medicineIds: string[]) => {
+    const { data: saleItems } = await supabase.from("sale_items").select("medicine_id").in("medicine_id", medicineIds);
+    const { data: purchaseItems } = await supabase.from("purchase_items").select("medicine_id").in("medicine_id", medicineIds).not("medicine_id", "is", null);
+    const { data: returnItems } = await supabase.from("sales_return_items").select("medicine_id").in("medicine_id", medicineIds);
+    const { data: transferItems } = await supabase.from("stock_transfers").select("medicine_id").in("medicine_id", medicineIds);
+    const usedIds = new Set([
+      ...(saleItems ?? []).map((i) => i.medicine_id),
+      ...(purchaseItems ?? []).map((i) => i.medicine_id),
+      ...(returnItems ?? []).map((i) => i.medicine_id),
+      ...(transferItems ?? []).map((i) => i.medicine_id),
+    ]);
+    return usedIds;
+  };
+
   const handleDelete = async (m: Medicine) => {
     if (!confirm(`Delete ${m.name}?`)) return;
+    const usedIds = await checkMedicineInUse([m.id]);
+    if (usedIds.has(m.id)) {
+      toast.error(`"${m.name}" को delete नहीं कर सकते क्योंकि इसकी sales/purchases/transfers हो चुकी हैं`);
+      return;
+    }
     const { error } = await supabase.from("medicines").delete().eq("id", m.id);
     if (error) toast.error(error.message);
     else {
@@ -129,11 +148,21 @@ export default function MedicinesPage() {
     if (!confirm("This will permanently delete all displayed medicines. Type OK to confirm.")) return;
     setSaving(true);
     const ids = filtered.map((m) => m.id);
-    const { error } = await supabase.from("medicines").delete().in("id", ids);
+    const usedIds = await checkMedicineInUse(ids);
+    const deletableIds = ids.filter((id) => !usedIds.has(id));
+    const skippedCount = ids.length - deletableIds.length;
+
+    if (deletableIds.length === 0) {
+      toast.error("कोई भी medicine delete नहीं हो सकती — सबकी sales/purchases/transfers हो चुकी हैं");
+      setSaving(false);
+      return;
+    }
+
+    const { error } = await supabase.from("medicines").delete().in("id", deletableIds);
     if (error) toast.error(error.message);
     else {
-      toast.success(`${ids.length} medicines deleted`);
-      await logActivity(`Deleted all medicines (${ids.length} items)`, "medicine");
+      toast.success(`${deletableIds.length} medicines deleted` + (skippedCount > 0 ? `, ${skippedCount} skipped (in use)` : ""));
+      await logActivity(`Deleted ${deletableIds.length} medicines, skipped ${skippedCount}`, "medicine");
     }
     setSaving(false);
   };
