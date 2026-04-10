@@ -164,6 +164,12 @@ export default function MedicinesPage() {
           </div>
           {isAdmin && (
             <div className="flex gap-2">
+              {filtered.length > 0 && (
+                <Button variant="destructive" onClick={handleDeleteAll} disabled={saving}>
+                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  <Trash2 className="h-4 w-4 mr-2" />Delete All ({filtered.length})
+                </Button>
+              )}
               <PdfUploadButton branches={branches} onSuccess={fetchData} />
               <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
               <DialogTrigger asChild>
