@@ -147,22 +147,33 @@ export default function MedicinesPage() {
     if (!confirm(`Are you sure you want to delete ALL ${filtered.length} medicines? This cannot be undone!`)) return;
     if (!confirm("This will permanently delete all displayed medicines. Type OK to confirm.")) return;
     setSaving(true);
-    const ids = filtered.map((m) => m.id);
-    const usedIds = await checkMedicineInUse(ids);
-    const deletableIds = ids.filter((id) => !usedIds.has(id));
-    const skippedCount = ids.length - deletableIds.length;
 
-    if (deletableIds.length === 0) {
-      toast.error("कोई भी medicine delete नहीं हो सकती — सबकी sales/purchases/transfers हो चुकी हैं");
-      setSaving(false);
-      return;
+    let deletedCount = 0;
+    let skippedCount = 0;
+    const batchSize = 50;
+    const ids = filtered.map((m) => m.id);
+
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize);
+      const usedIds = await checkMedicineInUse(batch);
+      const deletableIds = batch.filter((id) => !usedIds.has(id));
+      skippedCount += batch.length - deletableIds.length;
+
+      if (deletableIds.length > 0) {
+        const { error } = await supabase.from("medicines").delete().in("id", deletableIds);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          deletedCount += deletableIds.length;
+        }
+      }
     }
 
-    const { error } = await supabase.from("medicines").delete().in("id", deletableIds);
-    if (error) toast.error(error.message);
-    else {
-      toast.success(`${deletableIds.length} medicines deleted` + (skippedCount > 0 ? `, ${skippedCount} skipped (in use)` : ""));
-      await logActivity(`Deleted ${deletableIds.length} medicines, skipped ${skippedCount}`, "medicine");
+    if (deletedCount > 0) {
+      toast.success(`${deletedCount} medicines deleted` + (skippedCount > 0 ? `, ${skippedCount} skipped (in use)` : ""));
+      await logActivity(`Deleted ${deletedCount} medicines, skipped ${skippedCount}`, "medicine");
+    } else if (skippedCount > 0) {
+      toast.error("कोई भी medicine delete नहीं हो सकती — सबकी sales/purchases/transfers हो चुकी हैं");
     }
     setSaving(false);
   };
