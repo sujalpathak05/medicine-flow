@@ -17,6 +17,7 @@ import PurchasePage from "./pages/PurchasePage";
 import ReturnsPage from "./pages/ReturnsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AIChatPage from "./pages/AIChatPage";
+import CustomersPage from "./pages/CustomersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/purchase" element={<ProtectedRoute><PurchasePage /></ProtectedRoute>} />
             <Route path="/returns" element={<ProtectedRoute><ReturnsPage /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute adminOnly><ReportsPage /></ProtectedRoute>} />
+            <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
             <Route path="/ai-assistant" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             <Route path="/activity" element={<ProtectedRoute adminOnly><ActivityPage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />

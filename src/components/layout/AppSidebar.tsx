@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
   ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart,
-  Truck, PackagePlus, RotateCcw, FileBarChart, Bot
+  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -20,6 +20,7 @@ const adminItems = [
   { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
   { title: "Suppliers", url: "/suppliers", icon: Truck },
   { title: "Returns", url: "/returns", icon: RotateCcw },
+  { title: "Customers", url: "/customers", icon: UserCheck },
   { title: "Branches", url: "/branches", icon: Building2 },
   { title: "Users", url: "/users", icon: Users },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
@@ -34,6 +35,7 @@ const userItems = [
   { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
   { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
   { title: "Returns", url: "/returns", icon: RotateCcw },
+  { title: "Customers", url: "/customers", icon: UserCheck },
   { title: "Transfers", url: "/transfers", icon: ArrowLeftRight },
   { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
 ];
