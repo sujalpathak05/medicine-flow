@@ -303,9 +303,11 @@ export default function UsersPage() {
                         <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
                         <TableCell>
                           <Select value={userRole} onValueChange={(v) => handleRoleChange(p.user_id, v)} disabled={isCurrentUser}>
-                            <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
+                            <SelectTrigger className="w-32 h-8"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="staff">Staff</SelectItem>
+                              <SelectItem value="cashier">Cashier</SelectItem>
                               <SelectItem value="user">User</SelectItem>
                             </SelectContent>
                           </Select>
