@@ -61,6 +61,7 @@ const App = () => (
             <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
             <Route path="/ai-assistant" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             <Route path="/activity" element={<ProtectedRoute adminOnly><ActivityPage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
