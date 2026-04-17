@@ -27,6 +27,7 @@ const adminItems = [
   { title: "Reports", url: "/reports", icon: FileBarChart },
   { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
   { title: "Activity Log", url: "/activity", icon: ClipboardList },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const userItems = [
