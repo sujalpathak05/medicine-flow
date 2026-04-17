@@ -33,7 +33,7 @@ export default function UsersPage() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newFullName, setNewFullName] = useState("");
-  const [newRole, setNewRole] = useState<"user" | "admin">("user");
+  const [newRole, setNewRole] = useState<"user" | "admin" | "staff" | "cashier">("user");
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string; loginUrl: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
