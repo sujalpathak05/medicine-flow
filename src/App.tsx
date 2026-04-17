@@ -18,6 +18,7 @@ import ReturnsPage from "./pages/ReturnsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AIChatPage from "./pages/AIChatPage";
 import CustomersPage from "./pages/CustomersPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
             <Route path="/ai-assistant" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             <Route path="/activity" element={<ProtectedRoute adminOnly><ActivityPage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

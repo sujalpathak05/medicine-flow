@@ -336,6 +336,45 @@ export type Database = {
           },
         ]
       }
+      pharmacy_settings: {
+        Row: {
+          address: string
+          created_at: string
+          email: string
+          footer_note: string
+          gstin: string
+          id: string
+          name: string
+          phone: string
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          created_at?: string
+          email?: string
+          footer_note?: string
+          gstin?: string
+          id?: string
+          name?: string
+          phone?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string
+          footer_note?: string
+          gstin?: string
+          id?: string
+          name?: string
+          phone?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -555,6 +594,7 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           discount: number
+          doctor_name: string | null
           gst_amount: number | null
           id: string
           igst: number | null
@@ -573,6 +613,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           discount?: number
+          doctor_name?: string | null
           gst_amount?: number | null
           id?: string
           igst?: number | null
@@ -591,6 +632,7 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           discount?: number
+          doctor_name?: string | null
           gst_amount?: number | null
           id?: string
           igst?: number | null
@@ -855,7 +897,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "staff" | "cashier"
       medicine_category:
         | "tablet"
         | "capsule"
@@ -993,7 +1035,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "staff", "cashier"],
       medicine_category: [
         "tablet",
         "capsule",

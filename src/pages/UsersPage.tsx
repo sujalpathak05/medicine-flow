@@ -33,7 +33,7 @@ export default function UsersPage() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newFullName, setNewFullName] = useState("");
-  const [newRole, setNewRole] = useState<"user" | "admin">("user");
+  const [newRole, setNewRole] = useState<"user" | "admin" | "staff" | "cashier">("user");
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string; loginUrl: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -227,11 +227,13 @@ export default function UsersPage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Role</Label>
-                    <Select value={newRole} onValueChange={(v) => setNewRole(v as "user" | "admin")}>
+                    <Select value={newRole} onValueChange={(v) => setNewRole(v as any)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="admin">Admin (Full access)</SelectItem>
+                        <SelectItem value="staff">Staff (Inventory + Billing)</SelectItem>
+                        <SelectItem value="cashier">Cashier (Billing only)</SelectItem>
+                        <SelectItem value="user">User (Basic)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -301,9 +303,11 @@ export default function UsersPage() {
                         <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
                         <TableCell>
                           <Select value={userRole} onValueChange={(v) => handleRoleChange(p.user_id, v)} disabled={isCurrentUser}>
-                            <SelectTrigger className="w-28 h-8"><SelectValue /></SelectTrigger>
+                            <SelectTrigger className="w-32 h-8"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="staff">Staff</SelectItem>
+                              <SelectItem value="cashier">Cashier</SelectItem>
                               <SelectItem value="user">User</SelectItem>
                             </SelectContent>
                           </Select>

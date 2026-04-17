@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
   ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart,
-  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck
+  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck, Settings
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -27,6 +27,7 @@ const adminItems = [
   { title: "Reports", url: "/reports", icon: FileBarChart },
   { title: "AI Assistant", url: "/ai-assistant", icon: Bot },
   { title: "Activity Log", url: "/activity", icon: ClipboardList },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const userItems = [
