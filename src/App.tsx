@@ -18,6 +18,7 @@ import ReturnsPage from "./pages/ReturnsPage";
 import ReportsPage from "./pages/ReportsPage";
 import AIChatPage from "./pages/AIChatPage";
 import CustomersPage from "./pages/CustomersPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
