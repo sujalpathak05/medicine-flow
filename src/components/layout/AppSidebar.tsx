@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
   ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart,
-  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck
+  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck, Settings
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
