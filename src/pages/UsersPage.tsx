@@ -227,11 +227,13 @@ export default function UsersPage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Role</Label>
-                    <Select value={newRole} onValueChange={(v) => setNewRole(v as "user" | "admin")}>
+                    <Select value={newRole} onValueChange={(v) => setNewRole(v as any)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="admin">Admin (Full access)</SelectItem>
+                        <SelectItem value="staff">Staff (Inventory + Billing)</SelectItem>
+                        <SelectItem value="cashier">Cashier (Billing only)</SelectItem>
+                        <SelectItem value="user">User (Basic)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
