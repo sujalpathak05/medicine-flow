@@ -27,11 +27,22 @@ Deno.serve(async (req) => {
     const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
     if (authError || !caller) throw new Error(authError?.message || "Invalid token");
 
+    const { data: callerProfile, error: callerProfileError } = await supabaseAdmin
+      .from("profiles")
+      .select("pharmacy_id")
+      .eq("user_id", caller.id)
+      .maybeSingle();
+
+    if (callerProfileError || !callerProfile?.pharmacy_id) {
+      throw new Error("Caller pharmacy not found");
+    }
+
     const { data: roleCheck } = await supabaseAdmin
       .from("user_roles")
       .select("role")
       .eq("user_id", caller.id)
       .eq("role", "admin")
+      .eq("pharmacy_id", callerProfile.pharmacy_id)
       .maybeSingle();
 
     if (!roleCheck) throw new Error("Admin access required");
@@ -54,8 +65,22 @@ Deno.serve(async (req) => {
       return data;
     };
 
+    const assertSamePharmacyUser = async (userId: string) => {
+      const { data: targetProfile, error: targetError } = await supabaseAdmin
+        .from("profiles")
+        .select("pharmacy_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (targetError || targetProfile?.pharmacy_id !== callerProfile.pharmacy_id) {
+        throw new Error("User does not belong to your pharmacy");
+      }
+    };
+
     if (action === "create_user") {
       const { email, password, full_name, role } = params;
+      const allowedRoles = ["admin", "user", "staff", "cashier"];
+      const safeRole = allowedRoles.includes(String(role)) ? String(role) : "user";
 
       const newUser = await gotrueAdmin("POST", "/users", {
         email,
@@ -64,11 +89,38 @@ Deno.serve(async (req) => {
         user_metadata: { full_name },
       });
 
-      if (role === "admin") {
-        await supabaseAdmin
-          .from("user_roles")
-          .update({ role: "admin" })
-          .eq("user_id", newUser.id);
+      const { data: newProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("pharmacy_id")
+        .eq("user_id", newUser.id)
+        .maybeSingle();
+
+      const { error: profileUpdateError } = await supabaseAdmin
+        .from("profiles")
+        .update({
+          full_name,
+          email,
+          pharmacy_id: callerProfile.pharmacy_id,
+        })
+        .eq("user_id", newUser.id);
+      if (profileUpdateError) throw profileUpdateError;
+
+      const { error: roleUpdateError } = await supabaseAdmin
+        .from("user_roles")
+        .update({
+          role: safeRole,
+          pharmacy_id: callerProfile.pharmacy_id,
+        })
+        .eq("user_id", newUser.id);
+      if (roleUpdateError) throw roleUpdateError;
+
+      if (newProfile?.pharmacy_id && newProfile.pharmacy_id !== callerProfile.pharmacy_id) {
+        const { error: oldPharmacyDeleteError } = await supabaseAdmin
+          .from("pharmacies")
+          .delete()
+          .eq("id", newProfile.pharmacy_id)
+          .eq("owner_id", newUser.id);
+        if (oldPharmacyDeleteError) throw oldPharmacyDeleteError;
       }
 
       return new Response(
@@ -83,6 +135,7 @@ Deno.serve(async (req) => {
 
     if (action === "reset_password") {
       const { user_id, new_password } = params;
+      await assertSamePharmacyUser(String(user_id));
       await gotrueAdmin("PUT", `/users/${user_id}`, { password: new_password });
       return new Response(
         JSON.stringify({ success: true }),
@@ -92,6 +145,8 @@ Deno.serve(async (req) => {
 
     if (action === "delete_user") {
       const { user_id } = params;
+      if (user_id === caller.id) throw new Error("You cannot delete your own account");
+      await assertSamePharmacyUser(String(user_id));
       await gotrueAdmin("DELETE", `/users/${user_id}`);
       return new Response(
         JSON.stringify({ success: true }),

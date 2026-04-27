@@ -56,7 +56,7 @@ interface SaleResult {
 }
 
 const DEFAULT_SETTINGS: PharmacySettings = {
-  name: "Sharma Pharmacy",
+  name: "Medi Inventory",
   address: "",
   phone: "",
   gstin: "",

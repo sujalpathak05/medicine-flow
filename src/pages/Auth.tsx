@@ -12,6 +12,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [pharmacyName, setPharmacyName] = useState("Medi Inventory");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +28,12 @@ export default function Auth() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName } },
+          options: {
+            data: {
+              full_name: fullName,
+              pharmacy_name: pharmacyName.trim() || "Medi Inventory",
+            },
+          },
         });
         if (error) throw error;
         toast.success("Account created! Check your email to confirm.");
@@ -47,7 +53,7 @@ export default function Auth() {
             <Pill className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">MedInventory</h1>
+            <h1 className="font-display text-2xl font-bold text-foreground">Medi Inventory</h1>
             <p className="text-xs text-muted-foreground">Medicine Management System</p>
           </div>
         </div>
@@ -56,22 +62,34 @@ export default function Auth() {
           <CardHeader className="text-center">
             <CardTitle className="font-display">{isLogin ? "Welcome Back" : "Create Account"}</CardTitle>
             <CardDescription>
-              {isLogin ? "Sign in to manage your inventory" : "Set up your new account"}
+              {isLogin ? "Sign in to manage your inventory" : "Set up your new pharmacy workspace"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Dr. John Smith"
-                    required={!isLogin}
-                  />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Dr. John Smith"
+                      required={!isLogin}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pharmacyName">Pharmacy Name</Label>
+                    <Input
+                      id="pharmacyName"
+                      value={pharmacyName}
+                      onChange={(e) => setPharmacyName(e.target.value)}
+                      placeholder="Medi Inventory"
+                      required={!isLogin}
+                    />
+                  </div>
+                </>
               )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

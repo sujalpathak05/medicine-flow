@@ -26,7 +26,7 @@ const plans = [
 ];
 
 const testimonials = [
-  { name: "Rajesh Sharma", role: "Pharmacy Owner, Delhi", text: "Sharma Pharmacy software ne mera business 2x kar diya. Billing aur stock dono easy ho gaye." },
+  { name: "Rajesh Sharma", role: "Pharmacy Owner, Delhi", text: "Medi Inventory software ne mera business 2x kar diya. Billing aur stock dono easy ho gaye." },
   { name: "Priya Patel", role: "Medical Store, Ahmedabad", text: "GST reports automatic ban jaate hain. CA ko file dena ab seconds ka kaam hai." },
   { name: "Mohammed Khan", role: "Chain Pharmacy, Mumbai", text: "Multi-branch feature kamaal ka hai. Saari branches ek dashboard se control hoti hain." },
 ];
@@ -49,7 +49,7 @@ export default function Landing() {
             <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center">
               <Pill className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg">Sharma Pharmacy</span>
+            <span className="font-display font-bold text-lg">Medi Inventory</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
@@ -218,9 +218,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 py-10 text-center text-sm text-muted-foreground">
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center"><Pill className="h-4 w-4 text-primary-foreground" /></div>
-            <span className="font-semibold text-foreground">Sharma Pharmacy</span>
+            <span className="font-semibold text-foreground">Medi Inventory</span>
           </div>
-          <p>© {new Date().getFullYear()} Sharma Pharmacy. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Medi Inventory. All rights reserved.</p>
         </div>
       </footer>
     </div>
