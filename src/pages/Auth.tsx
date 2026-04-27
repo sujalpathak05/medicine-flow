@@ -12,7 +12,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [pharmacyName, setPharmacyName] = useState("Medi Inventory");
+  const [pharmacyName, setPharmacyName] = useState("Sharma Pharmacy");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +31,7 @@ export default function Auth() {
           options: {
             data: {
               full_name: fullName,
-              pharmacy_name: pharmacyName.trim() || "Medi Inventory",
+              pharmacy_name: pharmacyName.trim() || "Sharma Pharmacy",
             },
           },
         });
@@ -53,7 +53,7 @@ export default function Auth() {
             <Pill className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Medi Inventory</h1>
+            <h1 className="font-display text-2xl font-bold text-foreground">Sharma Pharmacy</h1>
             <p className="text-xs text-muted-foreground">Medicine Management System</p>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function Auth() {
                       id="pharmacyName"
                       value={pharmacyName}
                       onChange={(e) => setPharmacyName(e.target.value)}
-                      placeholder="Medi Inventory"
+                      placeholder="Sharma Pharmacy"
                       required={!isLogin}
                     />
                   </div>

@@ -120,7 +120,7 @@ export default function UsersPage() {
 
   const handleCopyCredentials = async () => {
     if (!createdCredentials) return;
-    const text = `🏥 Medi Inventory Login Details\n\n📧 Email: ${createdCredentials.email}\n🔑 Password: ${createdCredentials.password}\n🔗 Login URL: ${createdCredentials.loginUrl}\n\nPlease login and change your password.`;
+    const text = `🏥 MedInventory Login Details\n\n📧 Email: ${createdCredentials.email}\n🔑 Password: ${createdCredentials.password}\n🔗 Login URL: ${createdCredentials.loginUrl}\n\nPlease login and change your password.`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     toast.success("Credentials copied to clipboard!");

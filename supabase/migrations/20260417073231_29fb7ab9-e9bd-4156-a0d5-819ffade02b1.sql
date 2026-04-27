@@ -5,7 +5,7 @@ ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'cashier';
 -- Pharmacy settings table (single-row config for invoice header)
 CREATE TABLE IF NOT EXISTS public.pharmacy_settings (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL DEFAULT 'Medi Inventory',
+  name TEXT NOT NULL DEFAULT 'Sharma Pharmacy',
   address TEXT NOT NULL DEFAULT '',
   phone TEXT NOT NULL DEFAULT '',
   gstin TEXT NOT NULL DEFAULT '',
@@ -35,7 +35,7 @@ CREATE TRIGGER update_pharmacy_settings_updated_at
 
 -- Seed one default row
 INSERT INTO public.pharmacy_settings (name, tagline) 
-VALUES ('Medi Inventory', 'Your Trusted Health Partner');
+VALUES ('Sharma Pharmacy', 'Your Trusted Health Partner');
 
 -- Add doctor_name column to sales for invoice
 ALTER TABLE public.sales ADD COLUMN IF NOT EXISTS doctor_name TEXT DEFAULT '';

@@ -13,7 +13,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `You are an AI Inventory Assistant for Medi Inventory - a Medicine Inventory Management System used by Indian pharmacies.
+    const systemPrompt = `You are an AI Inventory Assistant for MedInventory - a Medicine Inventory Management System used by Indian pharmacies.
 
 You have access to real-time inventory data provided in the context. Use this data to answer questions accurately.
 

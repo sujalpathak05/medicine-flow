@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Pill, ShoppingCart, BarChart3, Users, Shield, Smartphone,
+  Pill, ShoppingCart, BarChart3, Users, Shield, MonitorDown,
   Check, Download, Star, FileBarChart, Bot, Building2, Menu,
 } from "lucide-react";
 import { useState } from "react";
@@ -26,17 +26,19 @@ const plans = [
 ];
 
 const testimonials = [
-  { name: "Rajesh Sharma", role: "Pharmacy Owner, Delhi", text: "Medi Inventory software ne mera business 2x kar diya. Billing aur stock dono easy ho gaye." },
+  { name: "Rajesh Sharma", role: "Pharmacy Owner, Delhi", text: "Sharma Pharmacy software ne mera business 2x kar diya. Billing aur stock dono easy ho gaye." },
   { name: "Priya Patel", role: "Medical Store, Ahmedabad", text: "GST reports automatic ban jaate hain. CA ko file dena ab seconds ka kaam hai." },
   { name: "Mohammed Khan", role: "Chain Pharmacy, Mumbai", text: "Multi-branch feature kamaal ka hai. Saari branches ek dashboard se control hoti hain." },
 ];
 
 const faqs = [
   { q: "Kya yeh software free hai?", a: "Haan, Silver plan bilkul free hai. Aap upgrade kabhi bhi kar sakte hain." },
-  { q: "Kya desktop pe install ho sakta hai?", a: "Haan, Windows, Mac aur Linux ke liye desktop app available hai. Neeche download karein." },
+  { q: "Kya desktop pe install ho sakta hai?", a: "Haan, Windows desktop app available hai. Neeche download karein." },
   { q: "Data safe hai kya?", a: "Bilkul. Aapka data encrypted cloud pe store hota hai with daily backups." },
   { q: "GST billing milti hai?", a: "Haan, full GST compliant invoice with HSN code, CGST/SGST/IGST automatic calculation." },
 ];
+
+const WINDOWS_DOWNLOAD_URL = "/downloads/sharma-pharmacy-windows.exe";
 
 export default function Landing() {
   const [open, setOpen] = useState(false);
@@ -49,7 +51,7 @@ export default function Landing() {
             <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center">
               <Pill className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg">Medi Inventory</span>
+            <span className="font-display font-bold text-lg">Sharma Pharmacy</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
@@ -136,13 +138,16 @@ export default function Landing() {
       {/* Download */}
       <section id="download" className="bg-muted/30 border-y">
         <div className="container mx-auto px-4 py-20 text-center">
-          <Smartphone className="h-12 w-12 mx-auto text-primary mb-4" />
+          <MonitorDown className="h-12 w-12 mx-auto text-primary mb-4" />
           <h2 className="font-display text-3xl md:text-4xl font-bold">Desktop pe download karein</h2>
-          <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Offline bhi kaam kare, full speed ke saath. Windows, Mac aur Linux ke liye available.</p>
+          <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Offline bhi kaam kare, full speed ke saath. Abhi Windows ke liye available.</p>
           <div className="flex flex-wrap justify-center gap-3 mt-8">
-            <Button size="lg"><Download className="mr-2 h-4 w-4" />Windows (.exe)</Button>
-            <Button size="lg" variant="outline"><Download className="mr-2 h-4 w-4" />Mac (.dmg)</Button>
-            <Button size="lg" variant="outline"><Download className="mr-2 h-4 w-4" />Linux (.tar.gz)</Button>
+            <Button size="lg" asChild>
+              <a href={WINDOWS_DOWNLOAD_URL} download>
+                <Download className="mr-2 h-4 w-4" />
+                Windows (.exe)
+              </a>
+            </Button>
           </div>
         </div>
       </section>
@@ -218,9 +223,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 py-10 text-center text-sm text-muted-foreground">
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center"><Pill className="h-4 w-4 text-primary-foreground" /></div>
-            <span className="font-semibold text-foreground">Medi Inventory</span>
+            <span className="font-semibold text-foreground">Sharma Pharmacy</span>
           </div>
-          <p>© {new Date().getFullYear()} Medi Inventory. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Sharma Pharmacy. All rights reserved.</p>
         </div>
       </footer>
     </div>

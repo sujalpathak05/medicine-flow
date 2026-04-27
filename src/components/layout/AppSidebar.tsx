@@ -60,7 +60,7 @@ export function AppSidebar() {
             </div>
             {!collapsed && (
               <div className="animate-slide-in">
-                <h1 className="font-display text-sm font-bold text-sidebar-foreground">Medi Inventory</h1>
+                <h1 className="font-display text-sm font-bold text-sidebar-foreground">MedInventory</h1>
                 <p className="text-[10px] text-sidebar-foreground/60">Management System</p>
               </div>
             )}
