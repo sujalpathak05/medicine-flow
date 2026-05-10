@@ -8,11 +8,8 @@ import { Pill, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [pharmacyName, setPharmacyName] = useState("Sharma Pharmacy");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,24 +17,9 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Signed in successfully!");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-              pharmacy_name: pharmacyName.trim() || "Sharma Pharmacy",
-            },
-          },
-        });
-        if (error) throw error;
-        toast.success("Account created! Check your email to confirm.");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      toast.success("Signed in successfully!");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -60,37 +42,11 @@ export default function Auth() {
 
         <Card className="glass-card">
           <CardHeader className="text-center">
-            <CardTitle className="font-display">{isLogin ? "Welcome Back" : "Create Account"}</CardTitle>
-            <CardDescription>
-              {isLogin ? "Sign in to manage your inventory" : "Set up your new pharmacy workspace"}
-            </CardDescription>
+            <CardTitle className="font-display">Welcome Back</CardTitle>
+            <CardDescription>Sign in with the credentials provided by your admin</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Dr. John Smith"
-                      required={!isLogin}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pharmacyName">Pharmacy Name</Label>
-                    <Input
-                      id="pharmacyName"
-                      value={pharmacyName}
-                      onChange={(e) => setPharmacyName(e.target.value)}
-                      placeholder="Sharma Pharmacy"
-                      required={!isLogin}
-                    />
-                  </div>
-                </>
-              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -116,17 +72,11 @@ export default function Auth() {
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {isLogin ? "Sign In" : "Create Account"}
+                Sign In
               </Button>
             </form>
-            <div className="mt-4 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-primary hover:underline"
-              >
-                {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
-              </button>
+            <div className="mt-4 text-center text-xs text-muted-foreground">
+              New accounts are created by the admin from the Users panel.
             </div>
           </CardContent>
         </Card>
