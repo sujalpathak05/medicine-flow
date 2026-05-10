@@ -61,7 +61,6 @@ export default function Landing() {
           </nav>
           <div className="flex items-center gap-2">
             <Link to="/auth"><Button variant="ghost" size="sm">Login</Button></Link>
-            <Link to="/auth"><Button size="sm">Sign Up Free</Button></Link>
             <button className="md:hidden" onClick={() => setOpen(!open)}><Menu className="h-5 w-5" /></button>
           </div>
         </div>
@@ -91,12 +90,12 @@ export default function Landing() {
               Inventory, GST billing, customers, reports aur AI assistant — sab kuch ek hi software me. Hindi & English support ke saath.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link to="/auth"><Button size="lg" className="text-base">Start Free Trial</Button></Link>
+              <Link to="/auth"><Button size="lg" className="text-base">Login to Dashboard</Button></Link>
               <a href="#download"><Button size="lg" variant="outline" className="text-base"><Download className="mr-2 h-4 w-4" />Desktop App</Button></a>
             </div>
             <div className="flex items-center gap-6 pt-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1"><Check className="h-4 w-4 text-primary" />Free forever plan</div>
-              <div className="flex items-center gap-1"><Check className="h-4 w-4 text-primary" />No credit card</div>
+              <div className="flex items-center gap-1"><Check className="h-4 w-4 text-primary" />Admin-provisioned accounts</div>
+              <div className="flex items-center gap-1"><Check className="h-4 w-4 text-primary" />Role-based access</div>
             </div>
           </div>
           <div className="relative">
@@ -170,7 +169,7 @@ export default function Landing() {
                 <ul className="space-y-2 text-sm">
                   {p.features.map((f) => (<li key={f} className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />{f}</li>))}
                 </ul>
-                <Link to="/auth" className="block"><Button className="w-full" variant={p.popular ? "default" : "outline"}>{p.cta}</Button></Link>
+                <Link to="/auth" className="block"><Button className="w-full" variant={p.popular ? "default" : "outline"}>Login</Button></Link>
               </CardContent>
             </Card>
           ))}
@@ -211,9 +210,9 @@ export default function Landing() {
       <section className="container mx-auto px-4 py-20">
         <Card className="bg-primary text-primary-foreground border-0">
           <CardContent className="p-12 text-center space-y-5">
-            <h2 className="font-display text-3xl md:text-4xl font-bold">Aaj hi shuruat karein</h2>
-            <p className="opacity-90 max-w-xl mx-auto">10,000+ pharmacies join kar chuke hain. Aap kab kar rahe hain?</p>
-            <Link to="/auth"><Button size="lg" variant="secondary">Free Account Banayein</Button></Link>
+            <h2 className="font-display text-3xl md:text-4xl font-bold">Apne dashboard me login karein</h2>
+            <p className="opacity-90 max-w-xl mx-auto">Admin se mile credentials use karke seedha apne pharmacy workspace me jaayein.</p>
+            <Link to="/auth"><Button size="lg" variant="secondary">Login</Button></Link>
           </CardContent>
         </Card>
       </section>
