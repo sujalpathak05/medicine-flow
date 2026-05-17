@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Pill, Building2, Users, ArrowLeftRight,
   ClipboardList, LogOut, Shield, User as UserIcon, ShoppingCart,
-  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck, Settings
+  Truck, PackagePlus, RotateCcw, FileBarChart, Bot, UserCheck, Settings, Receipt
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -17,6 +17,7 @@ const adminItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
   { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
+  { title: "Invoices", url: "/invoices", icon: Receipt },
   { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
   { title: "Suppliers", url: "/suppliers", icon: Truck },
   { title: "Returns", url: "/returns", icon: RotateCcw },
@@ -34,6 +35,7 @@ const userItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Medicines", url: "/medicines", icon: Pill },
   { title: "Sell Medicine", url: "/sell", icon: ShoppingCart },
+  { title: "Invoices", url: "/invoices", icon: Receipt },
   { title: "Purchase & GRN", url: "/purchase", icon: PackagePlus },
   { title: "Returns", url: "/returns", icon: RotateCcw },
   { title: "Customers", url: "/customers", icon: UserCheck },
